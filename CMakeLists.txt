@@ -10,7 +10,7 @@ zephyr_include_directories(.) # (inc)
 # NORDIC SDK APP START
 target_sources(app PRIVATE
 	src/main.c
-	src/si7021.c
+	src/LPS22.c
 	src/services/ble_shs.c
 )
 
