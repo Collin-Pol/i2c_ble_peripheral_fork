@@ -1,4 +1,4 @@
-"""
+/*
 &pinctrl {
 	i2c22_default: i2c22_default {
 		group1  {
@@ -34,7 +34,10 @@
 &adc {
 	status = "okay";
 };
-"""
+
+
+/*
+
 &pinctrl {
     i2c0_default: i2c0_default {
         group1 {
