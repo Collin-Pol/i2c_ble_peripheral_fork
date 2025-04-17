@@ -1,4 +1,4 @@
-
+"""
 &pinctrl {
 	i2c22_default: i2c22_default {
 		group1  {
@@ -33,5 +33,26 @@
 
 &adc {
 	status = "okay";
+};
+"""
+&pinctrl {
+    i2c0_default: i2c0_default {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SCL, 1, 11)>,
+                    <NRF_PSEL(TWIM_SDA, 1, 12)>;
+            bias-pull-up;
+        };
+    };
+};
+
+&i2c0 {
+    status = "okay";
+    clock-frequency = <I2C_BITRATE_STANDARD>;
+    pinctrl-0 = <&i2c0_default>;
+    ilps22qstr: ilps22qstr@5c {
+        compatible = "st,ilps22qstr";
+        reg = <0x5c>;
+        label = "ILPS22QSTR";
+    };
 };
 
