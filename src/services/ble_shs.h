@@ -18,6 +18,11 @@
     BT_UUID_128_ENCODE(0xa5b46352, 0x9d13, 0x479f, 0x9fcb, 0x3dcdf0a13f4d)
 
 #define PRESSURE_CHARACTERISTIC_UUID \
+    BT_UUID_128_ENCODE(0x753e3050, 0xdf06, 0x4b53, 0xb090, 0x5e1d810c4383)
+
+#define TEMP_CHARACTERISTIC_UUID \
     BT_UUID_128_ENCODE(0x506a55c4, 0xb5e7, 0x46fa, 0x8326, 0x8acaeb1189eb)
 
 void sensor_hub_update_pressure(struct bt_conn *conn, const uint8_t *data, uint16_t len);
+void sensor_hub_update_temperature(struct bt_conn *conn, const uint8_t *data, uint16_t len);
+
