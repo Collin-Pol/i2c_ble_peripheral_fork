@@ -10,8 +10,10 @@ zephyr_include_directories(.) # (inc)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE
-src/main.c
-src/lps22.c
-src/services/ble_shs.c
+    src/main.c
+    src/lps22.c
+    src/services/ble_shs.c
 )
+
+# NORDIC SDK APP END
 
