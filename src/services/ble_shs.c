@@ -23,16 +23,16 @@ LOG_MODULE_REGISTER(ble_shs);
 
 #define BT_UUID_SENSOR_HUB              BT_UUID_DECLARE_128(SENSOR_HUB_SERVICE_UUID)
 #define BT_UUID_SENSOR_HUB_PRESSURE     BT_UUID_DECLARE_128(PRESSURE_CHARACTERISTIC_UUID)
+#define BT_UUID_SENSOR_HUB_TEMP         BT_UUID_DECLARE_128(TEMP_CHARACTERISTIC_UUID)
 
-/*This function is called whenever the Client Characteristic Control Descriptor (CCCD) has been 
-changed by the GATT client, for each of the characteristics*/
+/* This function is called whenever the Client Characteristic Control Descriptor (CCCD) has been 
+changed by the GATT client, for each of the characteristics */
 static void on_cccd_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
     ARG_UNUSED(attr);
     switch(value)
     {
         case BT_GATT_CCC_NOTIFY: 
-           
             // Start sending stuff!
             break;
         
@@ -45,11 +45,17 @@ static void on_cccd_changed(const struct bt_gatt_attr *attr, uint16_t value)
     }
 }
 
-//Sensor hub Service Declaration and Registration
+// Sensor hub Service Declaration and Registration
 BT_GATT_SERVICE_DEFINE(sensor_hub,
     BT_GATT_PRIMARY_SERVICE(BT_UUID_SENSOR_HUB),
     
     BT_GATT_CHARACTERISTIC(BT_UUID_SENSOR_HUB_PRESSURE,
+                    BT_GATT_CHRC_NOTIFY,
+                    BT_GATT_PERM_READ,
+                    NULL, NULL, NULL),
+    BT_GATT_CCC(on_cccd_changed, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+    
+    BT_GATT_CHARACTERISTIC(BT_UUID_SENSOR_HUB_TEMP,
                     BT_GATT_CHRC_NOTIFY,
                     BT_GATT_PERM_READ,
                     NULL, NULL, NULL),
@@ -82,5 +88,32 @@ void sensor_hub_update_pressure(struct bt_conn *conn, const uint8_t *data, uint1
     else
     {
         LOG_WRN("Warning, notification not enabled for pressure characteristic");
+    }
+}
+
+void sensor_hub_update_temperature(struct bt_conn *conn, const uint8_t *data, uint16_t len)
+{
+    const struct bt_gatt_attr *attr = &sensor_hub.attrs[5]; 
+
+    struct bt_gatt_notify_params params = 
+    {
+        .uuid   = BT_UUID_SENSOR_HUB_TEMP,
+        .attr   = attr,
+        .data   = data,
+        .len    = len,
+        .func   = NULL
+    };
+
+    if(bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_NOTIFY)) 
+    {
+        // Send the notification
+    if(bt_gatt_notify_cb(conn, &params))
+        {
+            LOG_ERR("Error, unable to send notification");
+        }
+    }
+    else
+    {
+        LOG_WRN("Warning, notification not enabled for temperature characteristic");
     }
 }
