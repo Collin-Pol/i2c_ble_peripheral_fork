@@ -22,15 +22,18 @@
     pinctrl-1 = <&i2c22_sleep>;
     pinctrl-names = "default", "sleep";
 
-    lps22: lps22@5c {
-        compatible = "st,lps22";
+    lps22: lps22@5d {
+        compatible = "st,lps22hb-press";
         status = "okay";
-        reg = <0x5c>;
+        reg = <0x5d>;
     };
+
+    clock-frequency = <I2C_BITRATE_STANDARD>;
 };
 
 &adc {
     status = "okay";
 };
+
 
 
