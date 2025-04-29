@@ -141,5 +141,3 @@ int main(void)
 
 K_THREAD_DEFINE(bt_send_data_thread_id, STACKSIZE, bt_send_data_thread, NULL, NULL, NULL, PRIORITY, 0, 0);
 
-
-K_THREAD_DEFINE(bt_send_data_thread_id, STACKSIZE, bt_send_data_thread, NULL, NULL, NULL, PRIORITY, 0, 0);
