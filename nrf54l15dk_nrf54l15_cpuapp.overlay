@@ -7,7 +7,7 @@
     };
 
     i2c22_sleep: i2c22_sleep {
-        group1 {
+        group1 { 
             psels = <NRF_PSEL(TWIM_SCL, 1, 11)>,
                     <NRF_PSEL(TWIM_SDA, 1, 12)>;
             low-power-enable;
@@ -26,6 +26,7 @@
         compatible = "st,lps22hb-press";
         status = "okay";
         reg = <0x5d>;
+        label = "LPS22"; //added
     };
 
     clock-frequency = <I2C_BITRATE_STANDARD>;
@@ -34,6 +35,7 @@
 &adc {
     status = "okay";
 };
+
 
 
 
