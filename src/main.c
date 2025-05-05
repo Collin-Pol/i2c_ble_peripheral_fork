@@ -128,6 +128,9 @@ int main(void)
     {    
         pressure = lps22_read_pressure();
         temperature_C = lps22_read_temperature();
+        
+        //pressure = 1013.25; // Dummy value for testing
+        //temperature_C = 25.0; // Dummy value for testing
 
         bt_pressure = (int32_t)(pressure);
         bt_temperature = (int32_t)(temperature_C);
