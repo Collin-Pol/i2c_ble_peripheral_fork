@@ -1,3 +1,4 @@
+/*
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/sys/util.h>
@@ -116,4 +117,112 @@ float lps22_read_temperature(void)
     // unit conversion
     temperature_C = ((buf[1] << 8) | buf[0]) / 100.0;
     return temperature_C;
+}
+*/
+
+
+
+
+
+
+/*  
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/sensor.h>
+#include <stdio.h>
+#include <zephyr/sys/util.h>
+
+static void process_sample(const struct device *dev)
+{
+	static unsigned int obs;
+	struct sensor_value pressure, temp;
+
+	if (sensor_sample_fetch(dev) < 0) {
+		LOG_INF("Sensor sample update error\n");
+		return;
+	}
+
+	if (sensor_channel_get(dev, SENSOR_CHAN_PRESS, &pressure) < 0) {
+		LOG_INF("Cannot read LPS22HB pressure channel\n");
+		return;
+	}
+
+	if (sensor_channel_get(dev, SENSOR_CHAN_AMBIENT_TEMP, &temp) < 0) {
+		LOG_INF("Cannot read LPS22HB temperature channel\n");
+		return;
+	}
+
+	++obs;
+	LOG_INF("Observation:%u\n", obs);
+    
+	// display pressure 
+	LOG_INF("Pressure:%.1f kPa\n", sensor_value_to_double(&pressure)); 
+
+	// display temperature 
+	LOG_INF("Temperature:%.1f C\n", sensor_value_to_double(&temp));
+
+	// ^ YOU CAN USE THE FUNCTION RETURN VALUES HERE AND PIPE THAT TO YOUR BLE SERVICE! ^
+
+}
+*/
+
+
+
+#include <zephyr/kernel.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_REGISTER(lps22);
+
+static const struct device *lps22_dev;
+
+bool lps22_init(void)
+{
+    lps22_dev = DEVICE_DT_GET(DT_NODELABEL(lps22));
+    if (!device_is_ready(lps22_dev))
+    {
+        LOG_ERR("LPS22 device is not ready");
+        return false;
+    }
+
+    LOG_INF("LPS22 initialized successfully");
+    return true;
+}
+
+float lps22_read_pressure(void)
+{
+    struct sensor_value pressure;
+    if (sensor_sample_fetch(lps22_dev) < 0)
+    {
+        LOG_ERR("Failed to fetch sensor data");
+        return -1.0;
+    }
+
+    if (sensor_channel_get(lps22_dev, SENSOR_CHAN_PRESS, &pressure) < 0)
+    {
+        LOG_ERR("Failed to get pressure data");
+        return -1.0;
+    }
+
+    // Convert kPa to hPa
+    return sensor_value_to_double(&pressure) * 10.0;
+}
+
+float lps22_read_temperature(void)
+{
+    struct sensor_value temperature;
+    if (sensor_sample_fetch(lps22_dev) < 0)
+    {
+        LOG_ERR("Failed to fetch sensor data");
+        return -1.0;
+    }
+
+    if (sensor_channel_get(lps22_dev, SENSOR_CHAN_AMBIENT_TEMP, &temperature) < 0)
+    {
+        LOG_ERR("Failed to get temperature data");
+        return -1.0;
+    }
+
+    return sensor_value_to_double(&temperature);
 }
